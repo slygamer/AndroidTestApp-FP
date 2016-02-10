@@ -1,20 +1,41 @@
 package com.example.slygamer.myfirstapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
+
+import com.samsung.android.sdk.SsdkUnsupportedException;
+import com.samsung.android.sdk.pass.Spass;
+import com.samsung.android.sdk.pass.SpassFingerprint;
+import com.samsung.android.sdk.pass.SpassInvalidStateException;
 
 public class MyActivity extends AppCompatActivity {
 
+    // Key for message that is input to textbox
     public final static String EXTRA_MESSAGE = "com.example.slygamer.myfirstapp.MESSAGE";
 
+    private final static String TAG = "MyActivity: ";
+
+    // Variables needed for Samsung Galaxy Fingerprint
+    private Spass sPass;
+    private SpassFingerprint sPassFingerprint;
+    private Context context;
+
+    // Booleans for checking the Fingerprint features being enabled on phone
+    private boolean regFinger= false;
+    private boolean hasFingerprintEnabled = false;
+
+    // onCreate method is called as soon as Activity is called (aka. as soon as Application starts)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +51,27 @@ public class MyActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        // Disable Send button for message at first
+        Button sendButton = (Button) findViewById(R.id.send);
+        sendButton.setEnabled(false);
+
+        // Initialize the Samsung Galaxy Fingerprint stuff
+        context = this;
+        sPass = new Spass();
+        try{
+            sPass.initialize(MyActivity.this);
+        } catch(SsdkUnsupportedException e){
+            Log.d(TAG, "Exception thrown " + e);
+        } catch(UnsupportedOperationException e){
+            Log.d(TAG, "Fingerprint Service not supported on device");
+        }
+
+        hasFingerprintEnabled = sPass.isFeatureEnabled(Spass.DEVICE_FINGERPRINT);
+
+        if(hasFingerprintEnabled){
+            sPassFingerprint = new SpassFingerprint(MyActivity.this);
+        }
     }
 
     @Override
