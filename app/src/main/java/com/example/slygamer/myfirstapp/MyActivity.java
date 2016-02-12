@@ -27,7 +27,9 @@ public class MyActivity extends AppCompatActivity {
     // Tag for log messages showing which Application/Activity it came from
     private final static String TAG = "MyFirstApp/MyActivity: ";
 
-    public Button sendButton;
+    private Button sendButton;
+    private EditText editText;
+    private String textField;
 
     // Variables needed for Samsung Galaxy Fingerprint
     private Spass sPass;
@@ -92,18 +94,22 @@ public class MyActivity extends AppCompatActivity {
             }
         });
 
-        // Disable Send button for message at first
-        sendButton = (Button) findViewById(R.id.send);
-        sendButton.setEnabled(false);
+        editText = (EditText) findViewById(R.id.edit_message);
+        textField = editText.getText().toString();
 
         // Initialize the Samsung Galaxy Fingerprint stuff
         //context = this;
         sPass = new Spass();
-        try{
+        try
+        {
             sPass.initialize(MyActivity.this);
-        } catch(SsdkUnsupportedException e){
+        }
+        catch(SsdkUnsupportedException e)
+        {
             Log.d(TAG, "Exception thrown " + e);
-        } catch(UnsupportedOperationException e){
+        }
+        catch(UnsupportedOperationException e)
+        {
             Log.d(TAG, "Fingerprint Service not supported on device");
         }
 
@@ -112,16 +118,6 @@ public class MyActivity extends AppCompatActivity {
         if(hasFingerprintEnabled){
             sPassFingerprint = new SpassFingerprint(MyActivity.this);
             regFinger = sPassFingerprint.hasRegisteredFinger();
-
-            // If there is a registered finger, then pull up prompt
-            if(regFinger)
-            {
-                sPassFingerprint.startIdentifyWithDialog(MyActivity.this, listener, false);
-            }
-            else
-            {
-                Log.d(TAG, "No registered fingerprints detected");
-            }
         }
         else
         {
@@ -150,6 +146,24 @@ public class MyActivity extends AppCompatActivity {
     public void onResume()
     {
         Log.d(TAG, "In onResume()");
+
+        // Reset text in text field
+        editText.setText(textField);
+
+        // Disable Send button for message at first
+        sendButton = (Button) findViewById(R.id.send);
+        sendButton.setEnabled(false);
+
+        // If there is a registered finger, then pull up prompt
+        if(regFinger)
+        {
+            sPassFingerprint.startIdentifyWithDialog(MyActivity.this, listener, false);
+        }
+        else
+        {
+            Log.d(TAG, "No registered fingerprints detected");
+        }
+
         super.onResume();
     }
 
