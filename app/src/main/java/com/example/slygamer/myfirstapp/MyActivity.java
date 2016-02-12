@@ -131,26 +131,26 @@ public class MyActivity extends AppCompatActivity {
 
     public void onPause()
     {
-        super.onPause();
         Log.d(TAG, "In onPause()");
+        super.onPause();
     }
 
     public void onStop()
     {
-        super.onStop();
         Log.d(TAG, "In onStop()");
+        super.onStop();
     }
 
     public void onStart()
     {
-        super.onStart();
         Log.d(TAG, "In onStart()");
+        super.onStart();
     }
 
     public void onResume()
     {
-        super.onResume();
         Log.d(TAG, "In onResume()");
+        super.onResume();
     }
 
 
